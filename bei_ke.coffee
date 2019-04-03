@@ -1,3 +1,35 @@
+// ==UserScript==
+// @name         贝壳租房筛选器
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  根据关键词去除对应的条目, 提高找房效率
+// @author       someone
+// @require      http://coffeescript.org/browser-compiler/coffeescript.js
+// @grant GM.setValue
+// @grant GM.getValue
+// @grant GM.deleteValue
+// @include         *://xa.zu.ke.com/*
+// @match        <$URL$>
+// ==/UserScript==
+
+function evalCS(source) {
+  // Compile source to Coffeescript (Array)
+  var coffeescript = CoffeeScript.compile(source.toString()).split("\n");
+
+  // Prepend 'debugger'
+  coffeescript[1] = "debugger;" + coffeescript[1];
+
+  // Join and eval
+  eval(coffeescript.join("\n"));
+}
+
+// Script Source
+// -------------
+evalCS(<><![CDATA[
+
+# CoffeeScript here...
+# --------------------
+
 main_list_class_name = "content__list"
 main_list_element = document.getElementsByClassName(main_list_class_name)[0]
 local_db_key = "local_pattern_str"
@@ -75,3 +107,6 @@ create_insert_box = () ->
 target_elements = select main_list_element.childNodes
 create_insert_box()
 insert_pattern_button()
+
+
+]]></>);
