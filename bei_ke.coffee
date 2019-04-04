@@ -61,21 +61,21 @@ find_element_with_key = (elements, pattern) ->
 find_element_with_default_picture = (elements) ->
     is_defalut_img = (element) ->
         picture_element = item for item in element.children when item.className is "content__list--item--aside"
-        img_src = picture_element.children[0].src
+        img_src = picture_element.children[0].getAttribute('data-src')
         if img_src.search(pattern) >= 0 then true else false
 
     pattern = RegExp('/src/resource/default/')
     item for item in elements when is_defalut_img(item)
 
 update_delete_list_with_pattern = (elements, pattern) ->
-    to_delete.concat find_element_with_key(elements, pattern)
+    to_delete = to_delete.concat find_element_with_key(elements, pattern)
 
 update_delete_list_with_picture = (elements) ->
-    to_delete.concat find_element_with_default_picture(elements)
+    to_delete = to_delete.concat find_element_with_default_picture(elements)
 
 insert_button_on_click = () ->
     input_element = document.getElementById('input_of_tamp')
-    pattern = await pattern_generator input_element.value
+    pattern = await pattern_generator input_element.value.trim()
     update_delete_list_with_pattern(target_elements, pattern)
     update_delete_list_with_picture(target_elements)
     remove_from_to_delete()
