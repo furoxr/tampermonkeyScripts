@@ -27,9 +27,6 @@ function evalCS(source) {
 // -------------
 evalCS(<><![CDATA[
 
-# CoffeeScript here...
-# --------------------
-
 main_list_class_name = "content__list"
 main_list_element = document.getElementsByClassName(main_list_class_name)[0]
 local_db_key = "local_pattern_str"
@@ -63,8 +60,9 @@ find_element_with_key = (elements, pattern) ->
 
 find_element_with_default_picture = (elements) ->
     is_defalut_img = (element) ->
-        img_src = element.Children[0].Children[0].src
-        if src.search(pattern) >= 0 then true else false
+        picture_element = item for item in element.children when item.className is "content__list--item--aside"
+        img_src = picture_element.children[0].src
+        if img_src.search(pattern) >= 0 then true else false
 
     pattern = RegExp('/src/resource/default/')
     item for item in elements when is_defalut_img(item)
@@ -78,13 +76,13 @@ update_delete_list_with_picture = (elements) ->
 insert_button_on_click = () ->
     input_element = document.getElementById('input_of_tamp')
     pattern = await pattern_generator input_element.value
-    update_delete_list_with_pattern()
-    update_delete_list_with_picture()
+    update_delete_list_with_pattern(target_elements, pattern)
+    update_delete_list_with_picture(target_elements)
     remove_from_to_delete()
 
 clear_patterns = () ->
     await GM.deleteValue(local_db_key)
-    await insert_pattern_button()
+    await insert_button_on_click()
 
 create_insert_box = () ->
     container = document.createElement('div')
@@ -106,7 +104,6 @@ create_insert_box = () ->
 
 target_elements = select main_list_element.childNodes
 create_insert_box()
-insert_pattern_button()
-
+insert_button_on_click()
 
 ]]></>);
