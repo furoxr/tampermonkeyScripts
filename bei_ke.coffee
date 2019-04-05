@@ -30,13 +30,13 @@ evalCS(<><![CDATA[
 main_list_class_name = "content__list"
 main_list_element = document.getElementsByClassName(main_list_class_name)[0]
 local_db_key = "local_pattern_str"
-to_delete = []
 
 select = (collection) -> item for item in collection when item.className is "content__list--item"
 remove_from_list = (item) -> main_list_element.removeChild(item)
-remove_from_to_delete = () ->
-    remove_from_list(item) for item in to_delete
-    to_delete = []
+remove_from_to_delete = (to_delete) -> remove_from_list item for item in to_delete
+
+get_items = () ->
+    select document.getElementsByClassName(main_list_class_name)[0].childNodes
 
 pattern_generator = (pattern) ->
     local_pattern = await GM.getValue(local_db_key)
@@ -68,17 +68,16 @@ find_element_with_default_picture = (elements) ->
     item for item in elements when is_defalut_img(item)
 
 update_delete_list_with_pattern = (elements, pattern) ->
-    to_delete = to_delete.concat find_element_with_key(elements, pattern)
+    find_element_with_key(elements, pattern)
 
 update_delete_list_with_picture = (elements) ->
-    to_delete = to_delete.concat find_element_with_default_picture(elements)
+    find_element_with_default_picture(elements)
 
 insert_button_on_click = () ->
     input_element = document.getElementById('input_of_tamp')
     pattern = await pattern_generator input_element.value.trim()
-    update_delete_list_with_pattern(target_elements, pattern)
-    update_delete_list_with_picture(target_elements)
-    remove_from_to_delete()
+    remove_from_to_delete update_delete_list_with_pattern(get_items(), pattern)
+    remove_from_to_delete update_delete_list_with_picture(get_items())
 
 clear_patterns = () ->
     await GM.deleteValue(local_db_key)
@@ -102,7 +101,6 @@ create_insert_box = () ->
         .getElementById("clear_button_of_tamp")
         .addEventListener("click", clear_patterns, false)
 
-target_elements = select main_list_element.childNodes
 create_insert_box()
 insert_button_on_click()
 
